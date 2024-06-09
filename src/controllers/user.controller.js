@@ -7,7 +7,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 const registerUser = asyncHandler(async (req, res) => {
   // get user deatils from frontend
   const { fullname, email, username, password } = req.body;
-  console.log("Email:", email);
+  // console.log("Email:", email);
 
   // validation and check empty
 
@@ -25,7 +25,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // check if user already exists
-  const userExist = User.findOne({
+  const userExist = await User.findOne({
     $or: [{ username }, { email }],
   });
   if (userExist) {
@@ -37,16 +37,23 @@ const registerUser = asyncHandler(async (req, res) => {
   // The ?. operator is used to safely access nested properties.
   // If any part of the chain is null or undefined, the entire expression will short-circuit and return undefined instead of throwing an error.
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
   }
-
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage && req.files.coverImage.length > 0)
+  ) {
+    coverImageLocalPath = req.files.coverImage[0].path;
+  }
   // upload images to cloudinary
   const avatar = await uploadOnCloudinary(avatarLocalPath);
-  if (coverImageLocalPath) {
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-  }
+  // if (coverImageLocalPath) {
+  //   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  // }
+  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!avatar) {
     throw new ApiError(400, "Avatar is required");
