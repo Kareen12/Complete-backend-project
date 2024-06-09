@@ -25,4 +25,10 @@ app.use(express.static("public"));
 
 // to access or perform CRUD operations on users' cookie from their browser
 app.use(cookieParser());
+
+//routes
+import userRouter from "./routes/user.route.js";
+
+// /api/v1 is the standard way of writing the route, we are here using version 1 of our api
+app.use("/api/v1/users", userRouter);
 export { app };
