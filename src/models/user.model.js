@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema(
 
 // ye ek hook h called pre hook(it is a midddleware) which encrypts the password before it gets saved in the db
 userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) return next();
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
@@ -77,7 +77,7 @@ userSchema.methods.generateAccessToken = function () {
   );
 };
 
-userSchema.methods.generateRefreshToken = function (password) {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
