@@ -27,5 +27,6 @@ router.route("/login").post(loginUser);
 
 // Secured routes
 router.route("/logout").post(verifyJWT, logoutUser);
+// verifyJWT work is already handled in refreshAccessToken controller that's why it is not used here
 router.route("/refresh=token").post(refreshAccessToken);
 export default router;
